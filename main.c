@@ -4,6 +4,7 @@
 #include <string.h>
 #include <signal.h>
 #include <setjmp.h>
+#include <time.h>
 
 #define UNIDAD_TRABAJO 50
 
@@ -28,16 +29,27 @@ struct Thread{
 //Puntero a arreglo de Threads de tamaño TOTAL_THREADS
 struct Thread *threads;
 
+//Dato para sigsetjmp
 sigjmp_buf jmpbuf;
 
-void new_thread(struct Thread *thread, int boletos){
-    thread->total_boletos = boletos;
+//Funciones
+void calcular_unidad_trabajo(int thread_ganador);
+void read_parameters();
+int obtenerThread(int boleto_ganador);
+int todos_los_threads_terminaron();
+void lottery_scheduler();
+void trabajar(int ganador);
+void calcular_unidad_trabajo(int thread_ganador);
+
+//Inicializa un thread
+void new_thread(struct Thread *thread){
+    thread->total_boletos = 0;
     thread->resultado_parcial_de_pi = 0;
     thread->total_unidades_trabajo = 0;
     thread->unidades_de_trabajo_pendientes = 0;
 }
 
-//
+//Lee los parámetros desde el archivo de entrada input.txt
 void read_parameters()
 {
     FILE *file;
@@ -59,14 +71,15 @@ void read_parameters()
     getline(&line, &len, file);
     TOTAL_THREADS = atoi(line);
     
-    struct Thread threadArray[TOTAL_THREADS];
+    threads = malloc(sizeof(*threads) * TOTAL_THREADS);
     
     //Total de boletos
     getline(&line, &len, file);
     element = strtok(line, " ");
     for(int i=0; i < TOTAL_THREADS; i++)
     {
-    	new_thread(&threadArray[i], atoi(element));
+    	new_thread(&threads[i]);
+    	threads[i].total_boletos = atoi(element);
     	element = strtok(NULL, " ");
     }
     
@@ -75,12 +88,11 @@ void read_parameters()
     element = strtok(line, " ");
     for(int i=0; i < TOTAL_THREADS; i++)
     {
-    	threadArray[i].total_unidades_trabajo = atoi(element);
+    	threads[i].total_unidades_trabajo =  atoi(element);
+    	threads[i].unidades_de_trabajo_pendientes = atoi(element);
     	element = strtok(NULL, " ");
     }
-    
-    threads = threadArray;
-    
+        
     //Quantum o Porcentaje
     getline(&line, &len, file);    
     if(ES_EXPROPIATIVO)
@@ -92,68 +104,131 @@ void read_parameters()
     
     fclose(file);
     
+    	
+    
 }
 
+//Selecciona al thread ganador de la lotería
+int obtenerThread(int boleto_ganador)
+{
+    //utilizado por scheduler
+	//busca el thread que tiene el boleto ganador utilizando rangos
+	//retorna el thread o el Ìndice del thread o algo asÌ
+	//IMPORTANTE: No retornar un thread que ya terminÛ
+
+    int cont = 0;
+
+    for (int i = 0; i < TOTAL_THREADS; i++) {        
+        cont += threads[i].total_boletos;
+        if(cont > boleto_ganador)
+        {
+            return i;
+        } 
+    }
+}
+
+//Retorna 1 si todos los threads ya terminaron su trabajo
 int todos_los_threads_terminaron()
 {
-    return 0;
+    for( int i=0; i < TOTAL_THREADS; i++)
+    {
+    	if(threads[i].unidades_de_trabajo_pendientes > 0) return 0;
+    
+    }
+    return 1;
 }
 
+//Función llamada por la señal de alarma
 void sig_alarm_handler(int sigo)
 {
     siglongjmp(jmpbuf, 2);
 }
 
+//Scheduler por lotería, selecciona siguiente thread
 void lottery_scheduler()
 {
-    sigsetjmp(jmpbuf, 1);
-    if(todos_los_threads_terminaron()) exit(0);
+    sigsetjmp(jmpbuf, 1); //Punto de regreso de threads
+    
+    if(todos_los_threads_terminaron()){
+        free(threads);
+    	printf("Todos los threads han terminado.\n");
+    	printf("Resultado final de PI: %f\n",pi_Calculado);
+    }
     
     else
     {
         int total_boletos = 0;
+        for( int i=0; i < TOTAL_THREADS; i++){
+            total_boletos +=  threads[i].total_boletos;
+        }
+            
+        int boleto_ganador = rand() % total_boletos;
+        int thread_ganador = obtenerThread(boleto_ganador);
+        
+        //PRINTS DE PRUEBA
+        printf("\n----HACIENDO LOTERÍA--------------\n");
+        printf("Total de boletos: %d\n", total_boletos);
+        printf("Boleto ganador: %d\n", boleto_ganador);
+        printf("Thread con boleto ganador: %d\n", thread_ganador);        
         
     }
 	
 }
 
-int obtenerThread(int boleto_ganador){
-    int cont = 0;
-
-    for (int i = 0; i < TOTAL_THREADS; i++) {
-        Thread* thread = threads[i];
-        cont += thread->total_boletos;
-        if(cont > boleto_ganador)
+//Función que ejecutan los threads al ser seleccionados
+void trabajar(int ganador){
+   //Modo Expropiativo
+   if(ES_EXPROPIATIVO){
+   
+   	//Activa alarma de interrupción
+        alarm(QUANTUM);
+        
+        //Calcula elementos de serie
+        while(threads[ganador].unidades_de_trabajo_pendientes > 0)
         {
-            thread->total_boletos = 0;
-            return *thread;
-        } 
-    }
-	//utilizado por scheduler
-	//busca el thread que tiene el boleto ganador utilizando rangos
-	//retorna el thread o el �ndice del thread o algo as�
-	//IMPORTANTE: No retornar un thread que ya termin�
-	
-	/*
-	Ejemplo: Si hay 3 threads con 10 boletos cada uno. Total de 30.
-	El thread 1 tiene los boletos del 0 al 9
-	El thread 2 tiene los boletos del 10 al 19
-	El thread 3 tiene los boletos del 20 al 29.
-	
-	Si el thread 2 termina, el total debe  actualizarse y los rangos cambian:
-	El thread 1 tiene los boletos del 0 al 9
-	El thread 3 tiene los boletos del 10 al 19
-	*/
+            calcular_unidad_trabajo(ganador);
+        }
+        
+   //Modo No Expropiativo            
+   }else{
+   	int trabajo_hecho = 0;
+   	int trabajo_pendiente = threads[ganador].total_unidades_trabajo * PORCENTAJE_A_REALIZAR;
+   	
+   	while( trabajo_hecho < trabajo_pendiente && threads[ganador].unidades_de_trabajo_pendientes > 0)
+   	{
+            calcular_unidad_trabajo(ganador);
+            trabajo_hecho++;
+        }       
+        
+   }
+   
+   //Quita tiquetes si thread terminó trabajo
+   if(threads[ganador].unidades_de_trabajo_pendientes == 0)
+       threads[ganador].total_boletos = 0;
+       
+   //Regresa a scheduler
+   siglongjmp(jmpbuf, 1);
 }
 
+//Calcular los 50 siguientes elementos de la serie
+void calcular_unidad_trabajo(int thread_ganador)
+{
+    //Variables útiles: macro UNIDAD_TRABAJO (vale 50)
+    //			pi_Calculado, indice_serie_actual
+    // Acceder a thread usando: threads[thread_ganador].propiedad			
 
 
+}
 
 
 int main(int argc, char **argv)
 {
     
-    read_parameters();
+    read_parameters();  
+    
+    //Inicializa random
+    time_t t;
+    srand((unsigned) time(&t));
     
     //Asigna función a alarma
     if(signal(SIGALRM, sig_alarm_handler) == SIG_ERR){
