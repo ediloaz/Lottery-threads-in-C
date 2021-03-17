@@ -90,6 +90,39 @@ void read_parameters()
     
 }
 
+int obtenerThread(int boleto_ganador){
+
+    int cont = 0;
+
+    for (int i = 0; i < TOTAL_THREADS; i++) {
+        Thread* thread = threads[i];
+        cont += thread->total_boletos;
+        if(cont > boleto_ganador)
+        {
+            thread->total_boletos = 0;
+            return *thread;
+        } 
+    }
+
+    
+
+	//utilizado por scheduler
+	//busca el thread que tiene el boleto ganador utilizando rangos
+	//retorna el thread o el �ndice del thread o algo as�
+	//IMPORTANTE: No retornar un thread que ya termin�
+	
+	/*
+	Ejemplo: Si hay 3 threads con 10 boletos cada uno. Total de 30.
+	El thread 1 tiene los boletos del 0 al 9
+	El thread 2 tiene los boletos del 10 al 19
+	El thread 3 tiene los boletos del 20 al 29.
+	
+	Si el thread 2 termina, el total debe  actualizarse y los rangos cambian:
+	El thread 1 tiene los boletos del 0 al 9
+	El thread 3 tiene los boletos del 10 al 19
+	*/
+}
+
 int main(int argc, char **argv)
 {
     
