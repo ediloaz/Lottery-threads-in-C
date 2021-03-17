@@ -94,6 +94,26 @@ void read_parameters()
     
 }
 
+int* obtenerThread(int boleto_ganador)
+{
+    //utilizado por scheduler
+	//busca el thread que tiene el boleto ganador utilizando rangos
+	//retorna el thread o el Ìndice del thread o algo asÌ
+	//IMPORTANTE: No retornar un thread que ya terminÛ
+
+    int cont = 0;
+
+    for (int i = 0; i < TOTAL_THREADS; i++) {
+        Thread* thread = threads[i];
+        cont += thread->total_boletos;
+        if(cont > boleto_ganador)
+        {
+            thread->total_boletos = 0;
+            return &thread;
+        } 
+    }
+}
+
 int todos_los_threads_terminaron()
 {
     return 0;
