@@ -5,6 +5,7 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <time.h>
+#include <gtk/gtk.h>
 
 #define UNIDAD_TRABAJO 50
 
@@ -28,6 +29,11 @@ struct Thread{
 };
 //Puntero a arreglo de Threads de tamaño TOTAL_THREADS
 struct Thread *threads;
+
+//Inicialización de los componentes en Interfaz
+GtkWidget *g_lbl_mode;
+GtkWidget *g_lbl_quantum;
+GtkWidget *g_lbl_pi_general;
 
 //Dato para sigsetjmp
 sigjmp_buf jmpbuf;
@@ -103,8 +109,6 @@ void read_parameters()
     }
     
     fclose(file);
-    
-    	
     
 }
 
@@ -221,11 +225,62 @@ void calcular_unidad_trabajo(int thread_ganador)
 }
 
 
-int main(int argc, char **argv)
+// Funciones para la Interfaz de usuario
+
+// Configuración de la interfaz
+void actualizarInterfaz(){
+    
+}
+
+// Configuración de la interfaz
+void configurarVariablesDeInterfaz()
 {
-    
-    read_parameters();  
-    
+    // Definición variables del programa
+    char quatumString[15]; 
+    sprintf(quatumString, "%s%i", "Quantum: ", QUANTUM); 
+    char piGeneralString[250]; 
+    sprintf(piGeneralString, "%s%f", "Pi general calculado: ", pi_Calculado); 
+    gtk_label_set_text(GTK_LABEL(g_lbl_mode), ES_EXPROPIATIVO ? "Expropiativo" : "No expropiativo");
+    gtk_label_set_text(GTK_LABEL(g_lbl_quantum), quatumString);
+    gtk_label_set_text(GTK_LABEL(g_lbl_pi_general), piGeneralString);
+}
+
+// Creación de la interfaz
+void interfaz(int argc, char *argv[])
+{
+    GtkBuilder      *builder; 
+    GtkWidget       *window;
+
+    gtk_init(&argc, &argv);
+    builder = gtk_builder_new();
+    gtk_builder_add_from_file (builder, "interface.glade", NULL);
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "interface"));
+    gtk_builder_connect_signals(builder, NULL);
+
+    // Referencia de los componentes en interfaz 
+    // que se ocupan manejar con código
+    g_lbl_mode = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_mode"));
+    g_lbl_quantum = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_quantum"));
+    g_lbl_pi_general = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_pi_general"));
+
+
+    configurarVariablesDeInterfaz();
+
+    g_object_unref(builder);
+    gtk_widget_show(window);
+    gtk_main();
+}
+
+// Se llama cuando la interfaz es cerrada
+void on_window_main_destroy()
+{
+    gtk_main_quit();
+}
+
+
+
+
+void algorithm(){
     //Inicializa random
     time_t t;
     srand((unsigned) time(&t));
@@ -237,6 +292,15 @@ int main(int argc, char **argv)
     }
     
     lottery_scheduler();
+}
+
+int main(int argc, char **argv)
+{
+    
+    read_parameters();  
+    interfaz(argc, argv);
+    algorithm();
+    
         
     return 0;
 }
