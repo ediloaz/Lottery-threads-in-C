@@ -40,6 +40,8 @@ struct Thread *threads;
 //Inicialización de los componentes en Interfaz
 int maxThreadsEnInterfaz = 15;
 
+GtkBuilder *builder; 
+GtkWidget *window;
 GtkWidget *g_lbl_mode;
 GtkWidget *g_lbl_quantum;
 GtkWidget *g_lbl_pi_general;
@@ -245,24 +247,40 @@ void calcular_unidad_trabajo(int thread_ganador)
 
 
 //
+//
 // Funciones para la Interfaz de usuario
-
-
-void testeandoLaInterfaz(){
-    // TODO para probar la interfaz
-    // int timeToSleep = (int)(QUANTUM/1000);
-    // for (int i = 0; i < TOTAL_THREADS; i++) {
-    //     sleep(timeToSleep);
-    //     threads[i].resultado_parcial_de_pi = i;
-    //     printf("\nPasé\n");
-    // }
-    // printf("\n\nFinalicé\n");
-}
 
 
 // Actualiza la interfaz
 void actualizarInterfaz(){
-    // TODO
+    printf("actualizarInterfaz");
+    
+    // Actualizamos todos los hilos en pantalla
+    for (int i = 0; i < TOTAL_THREADS+1; i++) {
+        char id_result[100];
+        sprintf(id_result, "%i", threads[i].resultado_parcial_de_pi); 
+        gtk_label_set_text(GTK_LABEL(visual_threads[i].result), id_result);    
+    }
+
+    // Revisa si algún evento está pendiente de actualizar y lo actualiza.
+    // Éste se usa para actualizar cambios en el UI e invocar timeouts en interfaz.
+    // Mientras o luego de hacer algún cambio de la interfaz (como el set_text).
+    while (gtk_events_pending ())
+        gtk_main_iteration ();
+        
+}
+
+// TODO para probar la interfaz
+void testeandoLaInterfaz(){
+    printf("\n\n Inició el testeo \n");
+    
+    // int timeToSleep = (int)(QUANTUM/1000);
+    for (int i = 0; i < TOTAL_THREADS; i++) {
+        sleep(QUANTUM);
+        threads[i].resultado_parcial_de_pi = i+1;
+        actualizarInterfaz();
+    }
+    printf("\n\nFinalizó el testeo\n");
 }
 
 // Configuración constantes de la interfaz
@@ -278,17 +296,15 @@ void configurarConstantesDeInterfaz()
 }
 
 // Creación de la interfaz
-void interfaz(int argc, char *argv[])
+void iniciarInterfaz(int argc, char *argv[])
 {
-    GtkBuilder      *builder; 
-    GtkWidget       *window;
-
+    
     gtk_init(&argc, &argv);
     builder = gtk_builder_new();
     gtk_builder_add_from_file (builder, "interface.glade", NULL);
     window = GTK_WIDGET(gtk_builder_get_object(builder, "interface"));
     gtk_builder_connect_signals(builder, NULL);
-
+    
     // Referencia de los componentes en interfaz que se ocupan manejar con código
     g_lbl_mode = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_mode"));
     g_lbl_quantum = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_quantum"));
@@ -323,7 +339,6 @@ void interfaz(int argc, char *argv[])
     }
 
     configurarConstantesDeInterfaz();
-
     g_object_unref(builder);
     gtk_widget_show(window);
     gtk_main();
@@ -337,7 +352,7 @@ void on_window_main_destroy()
 
 
 
-
+// Esta función es llamada desde Glade una vez que inicia la interfaz
 void algorithm(){
 
     testeandoLaInterfaz();
@@ -357,11 +372,12 @@ void algorithm(){
 
 int main(int argc, char **argv)
 {
-    
     read_parameters();  
-    interfaz(argc, argv);
-    algorithm();
-    
+    iniciarInterfaz(argc, argv);
+
+    // Se está llamando desde interfaz la inicialización del programa, MIENTRAS se encuentra
+    // la forma de hacerlo automáticamente luego de inicializar la interfaz.
+    // algorithm();
         
     return 0;
 }
