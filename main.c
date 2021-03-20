@@ -55,6 +55,8 @@ struct VisualThread{
 
 struct VisualThread *visual_threads;
 
+// Usar random, se usa con int r = rand(); 
+// srand(time(NULL));
 
 //Dato para sigsetjmp
 sigjmp_buf jmpbuf;
@@ -250,16 +252,35 @@ void calcular_unidad_trabajo(int thread_ganador)
 //
 // Funciones para la Interfaz de usuario
 
+float getPorcentajeTrabajo(int positionThread){
+    int totalUnidadesActuales = threads[positionThread].total_unidades_trabajo - threads[positionThread].unidades_de_trabajo_pendientes;
+    return (totalUnidadesActuales * 100 / threads[positionThread].total_unidades_trabajo);
+}
 
 // Actualiza la interfaz
-void actualizarInterfaz(){
+void actualizarInterfaz(int threadActual){
     printf("actualizarInterfaz");
     
     // Actualizamos todos los hilos en pantalla
     for (int i = 0; i < TOTAL_THREADS+1; i++) {
-        char id_result[100];
-        sprintf(id_result, "%i", threads[i].resultado_parcial_de_pi); 
-        gtk_label_set_text(GTK_LABEL(visual_threads[i].result), id_result);    
+        
+        char value_percentage[100];
+        char value_result[100];
+        sprintf(value_percentage, "%i%s", (int)getPorcentajeTrabajo(i), "%%"); 
+        sprintf(value_result, "%i", threads[i].resultado_parcial_de_pi); 
+
+        gtk_label_set_text(GTK_LABEL(visual_threads[i].percentage), value_percentage);
+        gtk_progress_bar_set_fraction(visual_threads[i].progress_bar, (getPorcentajeTrabajo(i)/100));
+        gtk_label_set_text(GTK_LABEL(visual_threads[i].result), value_result);
+        
+        // Si es el thread actual le aplica un estilo único
+        // TODO
+        if (i==threadActual){
+            gtk_spinner_start(visual_threads[i].spinner);
+            
+        }else{
+            gtk_spinner_stop(visual_threads[i].spinner);
+        }
     }
 
     // Revisa si algún evento está pendiente de actualizar y lo actualiza.
@@ -270,17 +291,21 @@ void actualizarInterfaz(){
         
 }
 
+
+
 // TODO para probar la interfaz
 void testeandoLaInterfaz(){
-    printf("\n\n Inició el testeo \n");
-    
-    // int timeToSleep = (int)(QUANTUM/1000);
-    for (int i = 0; i < TOTAL_THREADS; i++) {
-        sleep(QUANTUM);
-        threads[i].resultado_parcial_de_pi = i+1;
-        actualizarInterfaz();
+
+    while(1){
+        int randomThread = rand()%TOTAL_THREADS; 
+        int repeticiones = rand()%20; 
+        for (int i = 0; i < repeticiones; i++) {
+            sleep(1);
+            threads[randomThread].resultado_parcial_de_pi = rand()%100000;
+            threads[randomThread].unidades_de_trabajo_pendientes = threads[randomThread].unidades_de_trabajo_pendientes-1;
+            actualizarInterfaz(randomThread);
+        }
     }
-    printf("\n\nFinalizó el testeo\n");
 }
 
 // Configuración constantes de la interfaz

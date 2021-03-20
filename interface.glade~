@@ -125,6 +125,9 @@
                   <object class="GtkLabel" id="th_01_lbl_percentage">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Thread #01
+
+Porcentaje de completitud del thread</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
@@ -138,6 +141,7 @@
                   <object class="GtkLabel" id="th_01_lbl_result">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Resultado parcial</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">0.00000</property>
                   </object>
@@ -1189,7 +1193,6 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkProgressBar" id="th_18_prg_bar">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <style>
                       <class name="progressBar"/>
@@ -1202,8 +1205,8 @@
                 </child>
                 <child>
                   <object class="GtkSpinner" id="th_18_spinner">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="no_show_all">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -1212,7 +1215,6 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="th_18_lbl_percentage">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
@@ -1225,7 +1227,6 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="th_18_lbl_result">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">0.00000</property>

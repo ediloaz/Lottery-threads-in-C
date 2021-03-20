@@ -31,7 +31,6 @@
             <property name="can_focus">False</property>
             <property name="margin_left">200</property>
             <property name="margin_right">200</property>
-            <property name="homogeneous">True</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
@@ -75,7 +74,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
           </object>
@@ -1318,4 +1317,5 @@ Resultado parcial</property>
       </object>
     </child>
   </object>
+  <object class="GtkListStore" id="liststore1"/>
 </interface>
