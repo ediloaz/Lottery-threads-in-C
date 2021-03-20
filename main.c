@@ -277,13 +277,20 @@ void actualizarInterfaz(int threadActual){
         // TODO
         if (i==threadActual){
             gtk_spinner_start(visual_threads[i].spinner);
-            gtk_style_context_remove_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar" );
-            gtk_style_context_add_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
+            
+            if (gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar"))
+                gtk_style_context_remove_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar" );
+            if (!(gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar")))
+                gtk_style_context_add_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
             
         }else{
             gtk_spinner_stop(visual_threads[i].spinner);
-            gtk_style_context_remove_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
-            gtk_style_context_add_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar" );
+            
+            if (gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar"))
+                gtk_style_context_remove_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
+            
+            if (!(gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar")))
+                gtk_style_context_add_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar" );
             // gtk_style_context_add_class ( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
         }
     }
