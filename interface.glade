@@ -2,6 +2,7 @@
 <!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <!-- interface-css-provider-path style.css -->
   <object class="GtkWindow" id="interface">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">SOA - Proyecto 01 - Manejo de threads</property>
@@ -35,16 +36,16 @@
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_bottom">20</property>
+                <property name="margin_bottom">35</property>
                 <property name="homogeneous">True</property>
                 <child>
                   <object class="GtkLabel" id="lbl_mode">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Exprop. / No exprop.</property>
-                    <attributes>
-                      <attribute name="background" value="#bdbdc3c3c7c7"/>
-                    </attributes>
+                    <style>
+                      <class name="headerText"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -57,9 +58,9 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Quatum</property>
-                    <attributes>
-                      <attribute name="background" value="#bdbdc3c3c7c7"/>
-                    </attributes>
+                    <style>
+                      <class name="headerText"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -67,6 +68,9 @@
                     <property name="position">1</property>
                   </packing>
                 </child>
+                <style>
+                  <class name="headerContainer"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -87,7 +91,7 @@
             <property name="can_focus">False</property>
             <property name="margin_left">20</property>
             <property name="margin_right">20</property>
-            <property name="row_spacing">100</property>
+            <property name="row_spacing">50</property>
             <property name="column_spacing">200</property>
             <child>
               <object class="GtkGrid">
@@ -97,6 +101,10 @@
                   <object class="GtkProgressBar" id="th_01_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="fraction">0.89000000000000001</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -158,6 +166,9 @@
                   <object class="GtkProgressBar" id="th_04_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -219,6 +230,9 @@
                   <object class="GtkProgressBar" id="th_02_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -280,6 +294,9 @@
                   <object class="GtkProgressBar" id="th_03_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -341,6 +358,10 @@
                   <object class="GtkProgressBar" id="th_05_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="fraction">0.079999999776482589</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -402,6 +423,9 @@
                   <object class="GtkProgressBar" id="th_06_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -463,6 +487,9 @@
                   <object class="GtkProgressBar" id="th_07_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -524,6 +551,9 @@
                   <object class="GtkProgressBar" id="th_08_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -585,6 +615,9 @@
                   <object class="GtkProgressBar" id="th_09_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -646,6 +679,9 @@
                   <object class="GtkProgressBar" id="th_10_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -707,6 +743,9 @@
                   <object class="GtkProgressBar" id="th_11_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -768,6 +807,9 @@
                   <object class="GtkProgressBar" id="th_12_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -829,6 +871,9 @@
                   <object class="GtkProgressBar" id="th_13_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -890,6 +935,9 @@
                   <object class="GtkProgressBar" id="th_14_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -951,6 +999,9 @@
                   <object class="GtkProgressBar" id="th_15_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -1004,6 +1055,195 @@
                 <property name="top_attach">4</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkProgressBar" id="th_16_prg_bar">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinner" id="th_16_spinner">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="th_16_lbl_percentage">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">0%</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="th_16_lbl_result">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">0.00000</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkProgressBar" id="th_17_prg_bar">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinner" id="th_17_spinner">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="th_17_lbl_percentage">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">0%</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="th_17_lbl_result">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">0.00000</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkProgressBar" id="th_18_prg_bar">
+                    <property name="can_focus">False</property>
+                    <style>
+                      <class name="progressBar"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinner" id="th_18_spinner">
+                    <property name="can_focus">False</property>
+                    <property name="no_show_all">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="th_18_lbl_percentage">
+                    <property name="can_focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">0%</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="th_18_lbl_result">
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">0.00000</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="top_attach">5</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -1015,16 +1255,16 @@
           <object class="GtkBox" id="footer">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_top">20</property>
+            <property name="margin_top">35</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkLabel" id="lbl_pi_general">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Resultado general</property>
-                <attributes>
-                  <attribute name="background" value="#bdbdc3c3c7c7"/>
-                </attributes>
+                <style>
+                  <class name="footerText"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1038,7 +1278,11 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="margin_top">30</property>
                 <signal name="clicked" handler="algorithm" swapped="no"/>
+                <style>
+                  <class name="buttonStart"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1049,6 +1293,9 @@
             <child type="center">
               <placeholder/>
             </child>
+            <style>
+              <class name="footerContainer"/>
+            </style>
           </object>
           <packing>
             <property name="expand">False</property>

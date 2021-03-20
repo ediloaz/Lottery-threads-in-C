@@ -38,7 +38,7 @@ struct Thread{
 struct Thread *threads;
 
 //Inicialización de los componentes en Interfaz
-int maxThreadsEnInterfaz = 15;
+int maxThreadsEnInterfaz = 17;
 
 GtkBuilder *builder; 
 GtkWidget *window;
@@ -304,6 +304,13 @@ void iniciarInterfaz(int argc, char *argv[])
     gtk_builder_add_from_file (builder, "interface.glade", NULL);
     window = GTK_WIDGET(gtk_builder_get_object(builder, "interface"));
     gtk_builder_connect_signals(builder, NULL);
+
+    // Estilos
+    GtkCssProvider *cssProvider = gtk_css_provider_new();
+    gtk_css_provider_load_from_path(cssProvider, "style.css", NULL);
+    gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+        GTK_STYLE_PROVIDER(cssProvider),
+        GTK_STYLE_PROVIDER_PRIORITY_USER);
     
     // Referencia de los componentes en interfaz que se ocupan manejar con código
     g_lbl_mode = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_mode"));
