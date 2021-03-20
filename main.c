@@ -9,6 +9,13 @@
 
 #define UNIDAD_TRABAJO 50
 
+
+// Usen para compilar y correr:
+//
+// gcc -o gladewin main.c -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic ; ./gladewin
+
+
+
 //Parametros
 short int ES_EXPROPIATIVO;
 int TOTAL_THREADS;
@@ -31,9 +38,21 @@ struct Thread{
 struct Thread *threads;
 
 //Inicialización de los componentes en Interfaz
+int maxThreadsEnInterfaz = 15;
+
 GtkWidget *g_lbl_mode;
 GtkWidget *g_lbl_quantum;
 GtkWidget *g_lbl_pi_general;
+
+struct VisualThread{
+    GtkWidget *progress_bar;
+    GtkWidget *percentage;
+    GtkWidget *result;
+    GtkWidget *spinner;
+};
+
+struct VisualThread *visual_threads;
+
 
 //Dato para sigsetjmp
 sigjmp_buf jmpbuf;
@@ -225,17 +244,30 @@ void calcular_unidad_trabajo(int thread_ganador)
 }
 
 
+//
 // Funciones para la Interfaz de usuario
 
-// Configuración de la interfaz
-void actualizarInterfaz(){
-    
+
+void testeandoLaInterfaz(){
+    // TODO para probar la interfaz
+    // int timeToSleep = (int)(QUANTUM/1000);
+    // for (int i = 0; i < TOTAL_THREADS; i++) {
+    //     sleep(timeToSleep);
+    //     threads[i].resultado_parcial_de_pi = i;
+    //     printf("\nPasé\n");
+    // }
+    // printf("\n\nFinalicé\n");
 }
 
-// Configuración de la interfaz
-void configurarVariablesDeInterfaz()
+
+// Actualiza la interfaz
+void actualizarInterfaz(){
+    // TODO
+}
+
+// Configuración constantes de la interfaz
+void configurarConstantesDeInterfaz()
 {
-    // Definición variables del programa
     char quatumString[15]; 
     sprintf(quatumString, "%s%i", "Quantum: ", QUANTUM); 
     char piGeneralString[250]; 
@@ -257,14 +289,40 @@ void interfaz(int argc, char *argv[])
     window = GTK_WIDGET(gtk_builder_get_object(builder, "interface"));
     gtk_builder_connect_signals(builder, NULL);
 
-    // Referencia de los componentes en interfaz 
-    // que se ocupan manejar con código
+    // Referencia de los componentes en interfaz que se ocupan manejar con código
     g_lbl_mode = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_mode"));
     g_lbl_quantum = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_quantum"));
     g_lbl_pi_general = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_pi_general"));
+    visual_threads = malloc(sizeof(*visual_threads) * maxThreadsEnInterfaz);
 
+    // Inicializamos todos los threads
+    for (int i = 0; i < maxThreadsEnInterfaz; i++) {
+        char id_progress_bar[100];
+        char id_result[100];
+        char id_percentage[100];
+        char id_spinner[100];
 
-    configurarVariablesDeInterfaz();
+        sprintf(id_progress_bar, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_prg_bar"); 
+        sprintf(id_result, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_lbl_result"); 
+        sprintf(id_percentage, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_lbl_percentage"); 
+        sprintf(id_spinner, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_spinner");
+
+        if (i<TOTAL_THREADS){
+            // Los agrega al array para administrarlos luego
+            visual_threads[i].progress_bar = GTK_WIDGET(gtk_builder_get_object(builder, id_progress_bar));
+            visual_threads[i].result = GTK_WIDGET(gtk_builder_get_object(builder, id_result));
+            visual_threads[i].percentage = GTK_WIDGET(gtk_builder_get_object(builder, id_percentage));
+            visual_threads[i].spinner = GTK_WIDGET(gtk_builder_get_object(builder, id_spinner));
+        }else{
+            // Simplemente los oculta de interfaz
+            gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(builder, id_progress_bar)));
+            gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(builder, id_result)));
+            gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(builder, id_percentage)));
+            gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(builder, id_spinner)));
+        }
+    }
+
+    configurarConstantesDeInterfaz();
 
     g_object_unref(builder);
     gtk_widget_show(window);
@@ -281,6 +339,9 @@ void on_window_main_destroy()
 
 
 void algorithm(){
+
+    testeandoLaInterfaz();
+
     //Inicializa random
     time_t t;
     srand((unsigned) time(&t));
