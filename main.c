@@ -266,7 +266,7 @@ void actualizarInterfaz(int threadActual){
         
         char value_percentage[100];
         char value_result[100];
-        sprintf(value_percentage, "%i%s", (int)getPorcentajeTrabajo(i), "%%"); 
+        sprintf(value_percentage, "%i%c", (int)getPorcentajeTrabajo(i), '%'); 
         sprintf(value_result, "%i", threads[i].resultado_parcial_de_pi); 
 
         gtk_label_set_text(GTK_LABEL(visual_threads[i].percentage), value_percentage);
@@ -277,9 +277,14 @@ void actualizarInterfaz(int threadActual){
         // TODO
         if (i==threadActual){
             gtk_spinner_start(visual_threads[i].spinner);
+            gtk_style_context_remove_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar" );
+            gtk_style_context_add_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
             
         }else{
             gtk_spinner_stop(visual_threads[i].spinner);
+            gtk_style_context_remove_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
+            gtk_style_context_add_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar" );
+            // gtk_style_context_add_class ( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
         }
     }
 

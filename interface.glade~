@@ -97,10 +97,16 @@
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Thread #01
+
+</property>
                 <child>
                   <object class="GtkProgressBar" id="th_01_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Thread #01
+
+Barra de progreso de completitud del thread</property>
                     <property name="fraction">0.89000000000000001</property>
                     <style>
                       <class name="progressBar"/>
@@ -141,7 +147,9 @@ Porcentaje de completitud del thread</property>
                   <object class="GtkLabel" id="th_01_lbl_result">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Resultado parcial</property>
+                    <property name="tooltip_text" translatable="yes">Thread #01
+
+Resultado parcial</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">0.00000</property>
                   </object>

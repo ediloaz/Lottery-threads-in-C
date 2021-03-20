@@ -29,16 +29,21 @@
 /* About threads */
 
 
-.progressBar > trough{
+.progressBar > trough, .currentProgressBar > trough {
     margin-bottom: 5px;
     padding-top: 12px;
     padding-bottom: 9px;
 }
-.progressBar > trough > progress{
+.progressBar > trough > progress, .currentProgressBar > trough > progress{
     background-image: none;
-    background-color: #27ae60;
     margin-bottom: 5px;
     padding-top: 10px;
     padding-bottom: 10px;
     border-radius: 2px 4px 4px 2px;
+}
+.progressBar > trough > progress{
+    background-color: #888;
+}
+.currentProgressBar > trough > progress {
+    background-color: #27ae60;
 }
