@@ -459,6 +459,7 @@ void iniciarInterfaz(int argc, char *argv[])
 void on_window_main_destroy()
 {
     gtk_main_quit();
+    exit(0);
 }
 
 
