@@ -20,6 +20,9 @@
 int flag = 0;
 int flag_alarma = 0;
 
+//Flag de alarma prueba
+static volatile sig_atomic_t flag_sono_alarma = 0;
+
 //Parametros
 short int ES_EXPROPIATIVO;
 int TOTAL_THREADS;
@@ -189,10 +192,14 @@ int todos_los_threads_terminaron()
 //Función llamada por la señal de alarma
 void sig_alarm_handler(int sigo)
 {
+
     // if (!flag_alarma){
     //     return;
     // }
-  if( flag ){
+    
+    flag_sono_alarma = 1;
+    
+  /*if( flag ){
       pi_Calculado = pi_Calculado_buf;
       threads[thread_ganador].unidades_de_trabajo_pendientes = unidades_pedientes_buf;
       threads[thread_ganador].resultado_parcial_de_pi = pi_temp_buf;
@@ -201,6 +208,7 @@ void sig_alarm_handler(int sigo)
     actualizarInterfaz();
     // flag_alarma = 0;
     siglongjmp(jmpbuf, 2);
+    */
 
 }
 
@@ -327,6 +335,10 @@ void calcular_unidad_trabajo()
 //    printf("Antes de flag indice_serie_actual%d\n",indice_serie_actual );
       flag = 0;
       actualizarInterfaz();
+      if(flag_sono_alarma){
+      	  flag_sono_alarma = 0;	
+      	  siglongjmp(jmpbuf, 2);
+      }
     }
     // printf("\n calcular_unidad_trabajo 1 \n");
     
