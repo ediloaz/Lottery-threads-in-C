@@ -114,9 +114,18 @@ void read_parameters()
     getline(&line, &len, file);
     ES_EXPROPIATIVO = atoi(line);
 
+    if(ES_EXPROPIATIVO>1 || ES_EXPROPIATIVO<0 ){
+    	printf("Modo no soportado, Expropiativo se espera un 1 o 0");
+    	exit(1);
+    }
+
     //Lee total de threads
     getline(&line, &len, file);
     TOTAL_THREADS = atoi(line);
+    if(TOTAL_THREADS<=0 || TOTAL_THREADS>maxThreadsEnInterfaz){
+    	printf("Cantidad de threads no soportados, se espera minimo 1 máximo %i", maxThreadsEnInterfaz);
+    	exit(1);
+    }
 
     threads = malloc(sizeof(*threads) * TOTAL_THREADS);
     if(threads == NULL){
@@ -129,9 +138,19 @@ void read_parameters()
     element = strtok(line, " ");
     for(int i=0; i < TOTAL_THREADS; i++)
     {
+        if(element==NULL){
+            printf("Boletos insufientes para la cantidad de threads");
+            exit(1);
+        }
     	new_thread(&threads[i]);
     	threads[i].total_boletos = atoi(element);
+        if(atoi(element)==0){
+            printf("Cantidad de boletos ocupan ser mayor a 0");
+            exit(1);
+        }
     	element = strtok(NULL, " ");
+        
+        
     }
 
     //Cantidad de trabajo
@@ -139,9 +158,18 @@ void read_parameters()
     element = strtok(line, " ");
     for(int i=0; i < TOTAL_THREADS; i++)
     {
+        if(element==NULL){
+            printf("Cantidades de trabajo insufientes para la cantidad de threads");
+            exit(1);
+        }
     	threads[i].total_unidades_trabajo =  atoi(element) * UNIDAD_TRABAJO;
     	threads[i].unidades_de_trabajo_pendientes = atoi(element) * UNIDAD_TRABAJO;
+        if(atoi(element)==0){
+            printf("Cantidad de trabajo ocupa ser mayor a 0");
+            exit(1);
+        }
     	element = strtok(NULL, " ");
+        
     }
 
     //Quantum o Porcentaje
@@ -149,8 +177,16 @@ void read_parameters()
     if(ES_EXPROPIATIVO)
     {
     	QUANTUM = atoi(line);
+        if(QUANTUM<=0){
+            printf("El quatum ocupa ser mayor a 0");
+            exit(1);
+        }
     }else{
     	PORCENTAJE_A_REALIZAR = atof(line);
+        if(PORCENTAJE_A_REALIZAR<=0 || PORCENTAJE_A_REALIZAR>1){
+            printf("El porcentaje a realizar ocupa ser mayor a 0");
+            exit(1);
+        }
     }
 
     fclose(file);
