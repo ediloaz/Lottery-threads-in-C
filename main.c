@@ -22,6 +22,7 @@ int flag_alarma = 0;
 
 //Flag de alarma prueba
 static volatile sig_atomic_t flag_sono_alarma = 0;
+static volatile sig_atomic_t flag_alarma_valida = 0;
 
 //Parametros
 short int ES_EXPROPIATIVO;
@@ -193,46 +194,24 @@ int todos_los_threads_terminaron()
 void sig_alarm_handler(int sigo)
 {
 
-    // if (!flag_alarma){
-    //     return;
-    // }
+    if (!flag_alarma_valida){
+         return;
+    }
     
     flag_sono_alarma = 1;
-    
-  /*if( flag ){
-      pi_Calculado = pi_Calculado_buf;
-      threads[thread_ganador].unidades_de_trabajo_pendientes = unidades_pedientes_buf;
-      threads[thread_ganador].resultado_parcial_de_pi = pi_temp_buf;
-      indice_serie_actual = indice_serie_actual_buf ;
-      }
-    actualizarInterfaz();
-    // flag_alarma = 0;
-    siglongjmp(jmpbuf, 2);
-    */
-
 }
 
 //Scheduler por lotería, selecciona siguiente thread
 void lottery_scheduler()
 {
     sigsetjmp(jmpbuf, 1); //Punto de regreso de threads
-    printf("sigsetjmp 2");
-    // if (sigsetjmp(jmpbuf, 1) == 2){
-    //     if( flag ){
-    //         pi_Calculado = pi_Calculado_buf;
-    //         threads[thread_ganador].unidades_de_trabajo_pendientes = unidades_pedientes_buf;
-    //         threads[thread_ganador].resultado_parcial_de_pi = pi_temp_buf;
-    //         indice_serie_actual = indice_serie_actual_buf ;
-    //         }
-    //         actualizarInterfaz();
-    // }
+
 
     if(todos_los_threads_terminaron()){
-        printf("todos_los_threads_terminaron");
         pi_Calculado = pi_Calculado * 4;
         actualizarInterfaz();
         free(threads);
-    	printf("Todos los threads han terminado.\n");
+    	printf("----Todos los threads han terminado.------\n");
     	printf("Resultado final de PI: %f\n",pi_Calculado);
         return;
     }
@@ -266,7 +245,7 @@ void trabajar(){
 
    if(ES_EXPROPIATIVO){
    	//Activa alarma de interrupción
-        // flag_alarma = 1;
+        flag_alarma_valida = 1;
         ualarm(QUANTUM*1000,0);
 
         //Calcula elementos de serie
@@ -274,7 +253,7 @@ void trabajar(){
         {
             calcular_unidad_trabajo();
         }
-        // flag_alarma = 0;
+        flag_alarma_valida = 0;
         
 
 
@@ -340,20 +319,6 @@ void calcular_unidad_trabajo()
       	  siglongjmp(jmpbuf, 2);
       }
     }
-    // printf("\n calcular_unidad_trabajo 1 \n");
-    
-      
-
-    //Interfaz
-
-
-    //Calcular los siguientes 50 t�rminos de la serie (porque 50 es el tama�o definido)
-    //Actutalizar el total de pi valor_pi_calculado
-    //Actualizar subtotal de pi en el thread
-    //Actualizar indice_serie_actual ++
-    //Actualizar cuantas unidades de trabajo lleva el thread (menos 1)
-    //Actualizar GUI?
-    //IMPORTANTE: Alarma no puede interrumpir las actualizaciones. Deber�an ser at�micas.
 }
 
 
