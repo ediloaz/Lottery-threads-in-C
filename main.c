@@ -164,6 +164,9 @@ int obtenerThread(int boleto_ganador)
     int cont = 0;
 
     for (int i = 0; i < TOTAL_THREADS; i++) {
+        if (threads[i].unidades_de_trabajo_pendientes==0){
+            continue;
+        }
         cont += threads[i].total_boletos;
         if(cont > boleto_ganador)
         {
@@ -205,6 +208,7 @@ void sig_alarm_handler(int sigo)
 void lottery_scheduler()
 {
     sigsetjmp(jmpbuf, 1); //Punto de regreso de threads
+    printf("sigsetjmp 2");
     // if (sigsetjmp(jmpbuf, 1) == 2){
     //     if( flag ){
     //         pi_Calculado = pi_Calculado_buf;
@@ -229,6 +233,9 @@ void lottery_scheduler()
     {
         int total_boletos = 0;
         for( int i=0; i < TOTAL_THREADS; i++){
+            if (threads[i].unidades_de_trabajo_pendientes==0){
+                continue;
+            }
             total_boletos +=  threads[i].total_boletos;
         }
 
@@ -283,6 +290,7 @@ void trabajar(){
        threads[thread_ganador].total_boletos = 0;
 
    //Regresa a scheduler
+   printf("sigsetjmp 1");
    siglongjmp(jmpbuf, 1);
 }
 
@@ -501,7 +509,7 @@ void algorithm(){
     }
 
     lottery_scheduler();
-    exit(0);
+    // exit(0);
     
 }
 
@@ -509,8 +517,8 @@ int main(int argc, char **argv)
 {
     read_parameters();
     
-    // iniciarInterfaz(argc, argv);
-    algorithm();
+    iniciarInterfaz(argc, argv);
+    // algorithm();
 
     // signal(SIGALRM,sig_alarm_handler);
     // lottery_scheduler();
