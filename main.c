@@ -5,6 +5,7 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <time.h>
+#include <math.h>
 #include <gtk/gtk.h>
 
 #define UNIDAD_TRABAJO 50
@@ -40,7 +41,7 @@ struct Thread *threads;
 //Inicialización de los componentes en Interfaz
 int maxThreadsEnInterfaz = 17;
 
-GtkBuilder *builder; 
+GtkBuilder *builder;
 GtkWidget *window;
 GtkWidget *g_lbl_mode;
 GtkWidget *g_lbl_quantum;
@@ -55,7 +56,7 @@ struct VisualThread{
 
 struct VisualThread *visual_threads;
 
-// Usar random, se usa con int r = rand(); 
+// Usar random, se usa con int r = rand();
 // srand(time(NULL));
 
 //Dato para sigsetjmp
@@ -85,23 +86,23 @@ void read_parameters()
     char *line;
     size_t len = 0;
     char *element;
-    
+
     //Abre el archivo
     if((file = fopen("input.txt","r")) == NULL){
     	printf("Error al abrir archivo");
     	exit(1);
     }
-    
+
     //Lee modo de operación
     getline(&line, &len, file);
     ES_EXPROPIATIVO = atoi(line);
-    
+
     //Lee total de threads
     getline(&line, &len, file);
     TOTAL_THREADS = atoi(line);
-    
+
     threads = malloc(sizeof(*threads) * TOTAL_THREADS);
-    
+
     //Total de boletos
     getline(&line, &len, file);
     element = strtok(line, " ");
@@ -111,7 +112,7 @@ void read_parameters()
     	threads[i].total_boletos = atoi(element);
     	element = strtok(NULL, " ");
     }
-    
+
     //Cantidad de trabajo
     getline(&line, &len, file);
     element = strtok(line, " ");
@@ -121,18 +122,18 @@ void read_parameters()
     	threads[i].unidades_de_trabajo_pendientes = atoi(element);
     	element = strtok(NULL, " ");
     }
-        
+
     //Quantum o Porcentaje
-    getline(&line, &len, file);    
+    getline(&line, &len, file);
     if(ES_EXPROPIATIVO)
     {
-    	QUANTUM = atoi(line);   
+    	QUANTUM = atoi(line);
     }else{
     	PORCENTAJE_A_REALIZAR = atof(line);
     }
-    
+
     fclose(file);
-    
+
 }
 
 //Selecciona al thread ganador de la lotería
@@ -145,12 +146,12 @@ int obtenerThread(int boleto_ganador)
 
     int cont = 0;
 
-    for (int i = 0; i < TOTAL_THREADS; i++) {        
+    for (int i = 0; i < TOTAL_THREADS; i++) {
         cont += threads[i].total_boletos;
         if(cont > boleto_ganador)
         {
             return i;
-        } 
+        }
     }
 }
 
@@ -160,7 +161,7 @@ int todos_los_threads_terminaron()
     for( int i=0; i < TOTAL_THREADS; i++)
     {
     	if(threads[i].unidades_de_trabajo_pendientes > 0) return 0;
-    
+
     }
     return 1;
 }
@@ -175,64 +176,64 @@ void sig_alarm_handler(int sigo)
 void lottery_scheduler()
 {
     sigsetjmp(jmpbuf, 1); //Punto de regreso de threads
-    
+
     if(todos_los_threads_terminaron()){
         free(threads);
     	printf("Todos los threads han terminado.\n");
     	printf("Resultado final de PI: %f\n",pi_Calculado);
     }
-    
+
     else
     {
         int total_boletos = 0;
         for( int i=0; i < TOTAL_THREADS; i++){
             total_boletos +=  threads[i].total_boletos;
         }
-            
+
         int boleto_ganador = rand() % total_boletos;
         int thread_ganador = obtenerThread(boleto_ganador);
-        
+
         //PRINTS DE PRUEBA
         printf("\n----HACIENDO LOTERÍA--------------\n");
         printf("Total de boletos: %d\n", total_boletos);
         printf("Boleto ganador: %d\n", boleto_ganador);
-        printf("Thread con boleto ganador: %d\n", thread_ganador);        
-        
+        printf("Thread con boleto ganador: %d\n", thread_ganador);
+
     }
-	
+
 }
 
 //Función que ejecutan los threads al ser seleccionados
 void trabajar(int ganador){
    //Modo Expropiativo
    if(ES_EXPROPIATIVO){
-   
+
    	//Activa alarma de interrupción
         alarm(QUANTUM);
-        
+
         //Calcula elementos de serie
         while(threads[ganador].unidades_de_trabajo_pendientes > 0)
         {
             calcular_unidad_trabajo(ganador);
         }
-        
-   //Modo No Expropiativo            
+
+   //Modo No Expropiativo
    }else{
    	int trabajo_hecho = 0;
    	int trabajo_pendiente = threads[ganador].total_unidades_trabajo * PORCENTAJE_A_REALIZAR;
-   	
+
    	while( trabajo_hecho < trabajo_pendiente && threads[ganador].unidades_de_trabajo_pendientes > 0)
    	{
             calcular_unidad_trabajo(ganador);
             trabajo_hecho++;
-        }       
-        
+        }
+
    }
-   
+
    //Quita tiquetes si thread terminó trabajo
    if(threads[ganador].unidades_de_trabajo_pendientes == 0)
        threads[ganador].total_boletos = 0;
-       
+
    //Regresa a scheduler
    siglongjmp(jmpbuf, 1);
 }
@@ -242,7 +243,7 @@ void calcular_unidad_trabajo(int thread_ganador)
 {
     //Variables útiles: macro UNIDAD_TRABAJO (vale 50)
     //			pi_Calculado, indice_serie_actual
-    // Acceder a thread usando: threads[thread_ganador].propiedad			
+    // Acceder a thread usando: threads[thread_ganador].propiedad
 
 
 }
@@ -260,35 +261,35 @@ float getPorcentajeTrabajo(int positionThread){
 // Actualiza la interfaz
 void actualizarInterfaz(int threadActual){
     printf("actualizarInterfaz");
-    
+
     // Actualizamos todos los hilos en pantalla
     for (int i = 0; i < TOTAL_THREADS+1; i++) {
-        
+
         char value_percentage[100];
         char value_result[100];
-        sprintf(value_percentage, "%i%c", (int)getPorcentajeTrabajo(i), '%'); 
-        sprintf(value_result, "%i", threads[i].resultado_parcial_de_pi); 
+        sprintf(value_percentage, "%i%c", (int)getPorcentajeTrabajo(i), '%');
+        sprintf(value_result, "%i", threads[i].resultado_parcial_de_pi);
 
         gtk_label_set_text(GTK_LABEL(visual_threads[i].percentage), value_percentage);
         gtk_progress_bar_set_fraction(visual_threads[i].progress_bar, (getPorcentajeTrabajo(i)/100));
         gtk_label_set_text(GTK_LABEL(visual_threads[i].result), value_result);
-        
+
         // Si es el thread actual le aplica un estilo único
         // TODO
         if (i==threadActual){
             gtk_spinner_start(visual_threads[i].spinner);
-            
+
             if (gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar"))
                 gtk_style_context_remove_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar" );
             if (!(gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar")))
                 gtk_style_context_add_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
-            
+
         }else{
             gtk_spinner_stop(visual_threads[i].spinner);
-            
+
             if (gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar"))
                 gtk_style_context_remove_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
-            
+
             if (!(gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar")))
                 gtk_style_context_add_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar" );
             // gtk_style_context_add_class ( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
@@ -300,7 +301,7 @@ void actualizarInterfaz(int threadActual){
     // Mientras o luego de hacer algún cambio de la interfaz (como el set_text).
     while (gtk_events_pending ())
         gtk_main_iteration ();
-        
+
 }
 
 
@@ -309,8 +310,8 @@ void actualizarInterfaz(int threadActual){
 void testeandoLaInterfaz(){
 
     while(1){
-        int randomThread = rand()%TOTAL_THREADS; 
-        int repeticiones = rand()%20; 
+        int randomThread = rand()%TOTAL_THREADS;
+        int repeticiones = rand()%20;
         for (int i = 0; i < repeticiones; i++) {
             sleep(1);
             threads[randomThread].resultado_parcial_de_pi = rand()%100000;
@@ -323,10 +324,10 @@ void testeandoLaInterfaz(){
 // Configuración constantes de la interfaz
 void configurarConstantesDeInterfaz()
 {
-    char quatumString[15]; 
-    sprintf(quatumString, "%s%i", "Quantum: ", QUANTUM); 
-    char piGeneralString[250]; 
-    sprintf(piGeneralString, "%s%f", "Pi general calculado: ", pi_Calculado); 
+    char quatumString[15];
+    sprintf(quatumString, "%s%i", "Quantum: ", QUANTUM);
+    char piGeneralString[250];
+    sprintf(piGeneralString, "%s%f", "Pi general calculado: ", pi_Calculado);
     gtk_label_set_text(GTK_LABEL(g_lbl_mode), ES_EXPROPIATIVO ? "Expropiativo" : "No expropiativo");
     gtk_label_set_text(GTK_LABEL(g_lbl_quantum), quatumString);
     gtk_label_set_text(GTK_LABEL(g_lbl_pi_general), piGeneralString);
@@ -335,7 +336,7 @@ void configurarConstantesDeInterfaz()
 // Creación de la interfaz
 void iniciarInterfaz(int argc, char *argv[])
 {
-    
+
     gtk_init(&argc, &argv);
     builder = gtk_builder_new();
     gtk_builder_add_from_file (builder, "interface.glade", NULL);
@@ -348,7 +349,7 @@ void iniciarInterfaz(int argc, char *argv[])
     gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
         GTK_STYLE_PROVIDER(cssProvider),
         GTK_STYLE_PROVIDER_PRIORITY_USER);
-    
+
     // Referencia de los componentes en interfaz que se ocupan manejar con código
     g_lbl_mode = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_mode"));
     g_lbl_quantum = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_quantum"));
@@ -362,9 +363,9 @@ void iniciarInterfaz(int argc, char *argv[])
         char id_percentage[100];
         char id_spinner[100];
 
-        sprintf(id_progress_bar, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_prg_bar"); 
-        sprintf(id_result, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_lbl_result"); 
-        sprintf(id_percentage, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_lbl_percentage"); 
+        sprintf(id_progress_bar, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_prg_bar");
+        sprintf(id_result, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_lbl_result");
+        sprintf(id_percentage, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_lbl_percentage");
         sprintf(id_spinner, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_spinner");
 
         if (i<TOTAL_THREADS){
@@ -404,24 +405,24 @@ void algorithm(){
     //Inicializa random
     time_t t;
     srand((unsigned) time(&t));
-    
+
     //Asigna función a alarma
     if(signal(SIGALRM, sig_alarm_handler) == SIG_ERR){
     	printf("Error de la señal");
     	exit(1);
     }
-    
+
     lottery_scheduler();
 }
 
 int main(int argc, char **argv)
 {
-    read_parameters();  
+    read_parameters();
     iniciarInterfaz(argc, argv);
 
     // Se está llamando desde interfaz la inicialización del programa, MIENTRAS se encuentra
     // la forma de hacerlo automáticamente luego de inicializar la interfaz.
     // algorithm();
-        
+
     return 0;
 }
