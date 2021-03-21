@@ -391,6 +391,10 @@ void actualizarInterfaz(){
         }
     }
 
+    char piGeneralString[250];
+    sprintf(piGeneralString, "%s%f", "Pi general calculado: ", pi_Calculado);
+    gtk_label_set_text(GTK_LABEL(g_lbl_pi_general), piGeneralString);
+
     // Revisa si algún evento está pendiente de actualizar y lo actualiza.
     // Éste se usa para actualizar cambios en el UI e invocar timeouts en interfaz.
     // Mientras o luego de hacer algún cambio de la interfaz (como el set_text).
@@ -509,7 +513,6 @@ void algorithm(){
     }
 
     lottery_scheduler();
-    // exit(0);
     
 }
 
