@@ -107,7 +107,7 @@
                     <property name="tooltip_text" translatable="yes">Thread #01
 
 Barra de progreso de completitud del thread</property>
-                    <property name="fraction">0.89000000000000001</property>
+                    <property name="fraction">2.2351741811588166e-10</property>
                     <style>
                       <class name="progressBar"/>
                     </style>
@@ -370,7 +370,7 @@ Resultado parcial</property>
                   <object class="GtkProgressBar" id="th_05_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="fraction">0.079999999776482589</property>
+                    <property name="fraction">2.2351741811588166e-10</property>
                     <style>
                       <class name="progressBar"/>
                     </style>

@@ -43,7 +43,7 @@ int thread_ganador;
 
 struct Thread{
     int total_boletos;
-    int resultado_parcial_de_pi;
+    float resultado_parcial_de_pi;
     int total_unidades_trabajo;
     int unidades_de_trabajo_pendientes;
 };
@@ -305,7 +305,7 @@ void calcular_unidad_trabajo()
     //Obtener el �ndice indice_serie_actual
     double pi_temp = 0;
     double term = 0;
-
+    
     // printf("\n calcular_unidad_trabajo 0 \n");
     for (int i = 0; i < UNIDAD_TRABAJO; i++) {
     //  index = i+indice_serie_actual;
@@ -319,13 +319,14 @@ void calcular_unidad_trabajo()
       flag = 1;
       pi_Calculado = pi_Calculado + term;
       //Interfaz
-      threads[thread_ganador].resultado_parcial_de_pi = pi_temp;
+      threads[thread_ganador].resultado_parcial_de_pi += term ;
       threads[thread_ganador].unidades_de_trabajo_pendientes -=1;
       
       indice_serie_actual++;
 //      printf("Luego de sumar i %f\n",indice_serie_actual);
 //    printf("Antes de flag indice_serie_actual%d\n",indice_serie_actual );
       flag = 0;
+      actualizarInterfaz();
     }
     // printf("\n calcular_unidad_trabajo 1 \n");
     
@@ -363,7 +364,7 @@ void actualizarInterfaz(){
         char value_percentage[100];
         char value_result[100];
         sprintf(value_percentage, "%i%c", (int)getPorcentajeTrabajo(i), '%');
-        sprintf(value_result, "%i", threads[i].resultado_parcial_de_pi);
+        sprintf(value_result, "%.30f", threads[i].resultado_parcial_de_pi);
 
         gtk_label_set_text(GTK_LABEL(visual_threads[i].percentage), value_percentage);
         gtk_progress_bar_set_fraction(visual_threads[i].progress_bar, (getPorcentajeTrabajo(i)/100));
@@ -392,7 +393,7 @@ void actualizarInterfaz(){
     }
 
     char piGeneralString[250];
-    sprintf(piGeneralString, "%s%f", "Pi general calculado: ", pi_Calculado);
+    sprintf(piGeneralString, "%s%.60f", "Pi general calculado: ", pi_Calculado);
     gtk_label_set_text(GTK_LABEL(g_lbl_pi_general), piGeneralString);
 
     // Revisa si algún evento está pendiente de actualizar y lo actualiza.
@@ -404,31 +405,20 @@ void actualizarInterfaz(){
 }
 
 
-
-// TODO para probar la interfaz
-void testeandoLaInterfaz(){
-
-    while(1){
-        int randomThread = rand()%TOTAL_THREADS;
-        int repeticiones = rand()%20;
-        for (int i = 0; i < repeticiones; i++) {
-            sleep(1);
-            threads[randomThread].resultado_parcial_de_pi = rand()%100000;
-            threads[randomThread].unidades_de_trabajo_pendientes = threads[randomThread].unidades_de_trabajo_pendientes-1;
-            actualizarInterfaz(randomThread);
-        }
-    }
-}
-
 // Configuración constantes de la interfaz
 void configurarConstantesDeInterfaz()
 {
-    char quatumString[15];
-    sprintf(quatumString, "%s%i", "Quantum: ", QUANTUM);
-    char piGeneralString[250];
+    char quantumString[25];
+    if (ES_EXPROPIATIVO){
+        sprintf(quantumString, "%s%i", "Quantum: ", QUANTUM);
+    }else{
+        sprintf(quantumString, "%s%.2f", "Porcetaje: ", PORCENTAJE_A_REALIZAR);
+    }
+    
+    char piGeneralString[100];
     sprintf(piGeneralString, "%s%f", "Pi general calculado: ", pi_Calculado);
     gtk_label_set_text(GTK_LABEL(g_lbl_mode), ES_EXPROPIATIVO ? "Expropiativo" : "No expropiativo");
-    gtk_label_set_text(GTK_LABEL(g_lbl_quantum), quatumString);
+    gtk_label_set_text(GTK_LABEL(g_lbl_quantum), quantumString);
     gtk_label_set_text(GTK_LABEL(g_lbl_pi_general), piGeneralString);
 }
 
