@@ -5,8 +5,16 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <time.h>
+#include <gtk/gtk.h>
 
 #define UNIDAD_TRABAJO 50
+
+
+// Usen para compilar y correr:
+//
+// gcc -o gladewin main.c -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic ; ./gladewin
+
+
 
 //Parametros
 short int ES_EXPROPIATIVO;
@@ -28,6 +36,27 @@ struct Thread{
 };
 //Puntero a arreglo de Threads de tamaño TOTAL_THREADS
 struct Thread *threads;
+
+//Inicialización de los componentes en Interfaz
+int maxThreadsEnInterfaz = 17;
+
+GtkBuilder *builder; 
+GtkWidget *window;
+GtkWidget *g_lbl_mode;
+GtkWidget *g_lbl_quantum;
+GtkWidget *g_lbl_pi_general;
+
+struct VisualThread{
+    GtkWidget *progress_bar;
+    GtkWidget *percentage;
+    GtkWidget *result;
+    GtkWidget *spinner;
+};
+
+struct VisualThread *visual_threads;
+
+// Usar random, se usa con int r = rand(); 
+// srand(time(NULL));
 
 //Dato para sigsetjmp
 sigjmp_buf jmpbuf;
@@ -103,8 +132,6 @@ void read_parameters()
     }
     
     fclose(file);
-    
-    	
     
 }
 
@@ -221,11 +248,159 @@ void calcular_unidad_trabajo(int thread_ganador)
 }
 
 
-int main(int argc, char **argv)
+//
+//
+// Funciones para la Interfaz de usuario
+
+float getPorcentajeTrabajo(int positionThread){
+    int totalUnidadesActuales = threads[positionThread].total_unidades_trabajo - threads[positionThread].unidades_de_trabajo_pendientes;
+    return (totalUnidadesActuales * 100 / threads[positionThread].total_unidades_trabajo);
+}
+
+// Actualiza la interfaz
+void actualizarInterfaz(int threadActual){
+    printf("actualizarInterfaz");
+    
+    // Actualizamos todos los hilos en pantalla
+    for (int i = 0; i < TOTAL_THREADS+1; i++) {
+        
+        char value_percentage[100];
+        char value_result[100];
+        sprintf(value_percentage, "%i%c", (int)getPorcentajeTrabajo(i), '%'); 
+        sprintf(value_result, "%i", threads[i].resultado_parcial_de_pi); 
+
+        gtk_label_set_text(GTK_LABEL(visual_threads[i].percentage), value_percentage);
+        gtk_progress_bar_set_fraction(visual_threads[i].progress_bar, (getPorcentajeTrabajo(i)/100));
+        gtk_label_set_text(GTK_LABEL(visual_threads[i].result), value_result);
+        
+        // Si es el thread actual le aplica un estilo único
+        // TODO
+        if (i==threadActual){
+            gtk_spinner_start(visual_threads[i].spinner);
+            
+            if (gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar"))
+                gtk_style_context_remove_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar" );
+            if (!(gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar")))
+                gtk_style_context_add_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
+            
+        }else{
+            gtk_spinner_stop(visual_threads[i].spinner);
+            
+            if (gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar"))
+                gtk_style_context_remove_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
+            
+            if (!(gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar")))
+                gtk_style_context_add_class( gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar" );
+            // gtk_style_context_add_class ( gtk_widget_get_style_context(visual_threads[i].progress_bar), "currentProgressBar" );
+        }
+    }
+
+    // Revisa si algún evento está pendiente de actualizar y lo actualiza.
+    // Éste se usa para actualizar cambios en el UI e invocar timeouts en interfaz.
+    // Mientras o luego de hacer algún cambio de la interfaz (como el set_text).
+    while (gtk_events_pending ())
+        gtk_main_iteration ();
+        
+}
+
+
+
+// TODO para probar la interfaz
+void testeandoLaInterfaz(){
+
+    while(1){
+        int randomThread = rand()%TOTAL_THREADS; 
+        int repeticiones = rand()%20; 
+        for (int i = 0; i < repeticiones; i++) {
+            sleep(1);
+            threads[randomThread].resultado_parcial_de_pi = rand()%100000;
+            threads[randomThread].unidades_de_trabajo_pendientes = threads[randomThread].unidades_de_trabajo_pendientes-1;
+            actualizarInterfaz(randomThread);
+        }
+    }
+}
+
+// Configuración constantes de la interfaz
+void configurarConstantesDeInterfaz()
+{
+    char quatumString[15]; 
+    sprintf(quatumString, "%s%i", "Quantum: ", QUANTUM); 
+    char piGeneralString[250]; 
+    sprintf(piGeneralString, "%s%f", "Pi general calculado: ", pi_Calculado); 
+    gtk_label_set_text(GTK_LABEL(g_lbl_mode), ES_EXPROPIATIVO ? "Expropiativo" : "No expropiativo");
+    gtk_label_set_text(GTK_LABEL(g_lbl_quantum), quatumString);
+    gtk_label_set_text(GTK_LABEL(g_lbl_pi_general), piGeneralString);
+}
+
+// Creación de la interfaz
+void iniciarInterfaz(int argc, char *argv[])
 {
     
-    read_parameters();  
+    gtk_init(&argc, &argv);
+    builder = gtk_builder_new();
+    gtk_builder_add_from_file (builder, "interface.glade", NULL);
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "interface"));
+    gtk_builder_connect_signals(builder, NULL);
+
+    // Estilos
+    GtkCssProvider *cssProvider = gtk_css_provider_new();
+    gtk_css_provider_load_from_path(cssProvider, "style.css", NULL);
+    gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+        GTK_STYLE_PROVIDER(cssProvider),
+        GTK_STYLE_PROVIDER_PRIORITY_USER);
     
+    // Referencia de los componentes en interfaz que se ocupan manejar con código
+    g_lbl_mode = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_mode"));
+    g_lbl_quantum = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_quantum"));
+    g_lbl_pi_general = GTK_WIDGET(gtk_builder_get_object(builder, "lbl_pi_general"));
+    visual_threads = malloc(sizeof(*visual_threads) * maxThreadsEnInterfaz);
+
+    // Inicializamos todos los threads
+    for (int i = 0; i < maxThreadsEnInterfaz; i++) {
+        char id_progress_bar[100];
+        char id_result[100];
+        char id_percentage[100];
+        char id_spinner[100];
+
+        sprintf(id_progress_bar, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_prg_bar"); 
+        sprintf(id_result, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_lbl_result"); 
+        sprintf(id_percentage, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_lbl_percentage"); 
+        sprintf(id_spinner, "%s%i%s", i>8 ? "th_" : "th_0", i+1, "_spinner");
+
+        if (i<TOTAL_THREADS){
+            // Los agrega al array para administrarlos luego
+            visual_threads[i].progress_bar = GTK_WIDGET(gtk_builder_get_object(builder, id_progress_bar));
+            visual_threads[i].result = GTK_WIDGET(gtk_builder_get_object(builder, id_result));
+            visual_threads[i].percentage = GTK_WIDGET(gtk_builder_get_object(builder, id_percentage));
+            visual_threads[i].spinner = GTK_WIDGET(gtk_builder_get_object(builder, id_spinner));
+        }else{
+            // Simplemente los oculta de interfaz
+            gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(builder, id_progress_bar)));
+            gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(builder, id_result)));
+            gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(builder, id_percentage)));
+            gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(builder, id_spinner)));
+        }
+    }
+
+    configurarConstantesDeInterfaz();
+    g_object_unref(builder);
+    gtk_widget_show(window);
+    gtk_main();
+}
+
+// Se llama cuando la interfaz es cerrada
+void on_window_main_destroy()
+{
+    gtk_main_quit();
+}
+
+
+
+// Esta función es llamada desde Glade una vez que inicia la interfaz
+void algorithm(){
+
+    testeandoLaInterfaz();
+
     //Inicializa random
     time_t t;
     srand((unsigned) time(&t));
@@ -237,6 +412,16 @@ int main(int argc, char **argv)
     }
     
     lottery_scheduler();
+}
+
+int main(int argc, char **argv)
+{
+    read_parameters();  
+    iniciarInterfaz(argc, argv);
+
+    // Se está llamando desde interfaz la inicialización del programa, MIENTRAS se encuentra
+    // la forma de hacerlo automáticamente luego de inicializar la interfaz.
+    // algorithm();
         
     return 0;
 }
