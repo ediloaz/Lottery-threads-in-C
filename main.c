@@ -8,7 +8,7 @@
 #include <math.h>
 #include <gtk/gtk.h>
 
-#define UNIDAD_TRABAJO 1
+#define UNIDAD_TRABAJO 50
 
 
 // Usen para compilar y correr:
@@ -18,6 +18,7 @@
 
 //Flags
 int flag = 0;
+int flag_alarma = 0;
 
 //Parametros
 short int ES_EXPROPIATIVO;
@@ -38,7 +39,6 @@ int pi_Calculado_buf = 0;
 int indice_serie_actual_buf = 0;
 int unidades_pedientes_buf = 0;
 int pi_temp_buf = 0;
-
 int thread_ganador;
 
 struct Thread{
@@ -81,6 +81,8 @@ int obtenerThread(int boleto_ganador);
 int todos_los_threads_terminaron();
 void lottery_scheduler();
 void trabajar();
+void actualizarInterfaz();
+
 
 //Inicializa un thread
 void new_thread(struct Thread *thread){
@@ -184,12 +186,17 @@ int todos_los_threads_terminaron()
 //Función llamada por la señal de alarma
 void sig_alarm_handler(int sigo)
 {
-  if( flag == 1){
+    // if (!flag_alarma){
+    //     return;
+    // }
+  if( flag ){
       pi_Calculado = pi_Calculado_buf;
       threads[thread_ganador].unidades_de_trabajo_pendientes = unidades_pedientes_buf;
       threads[thread_ganador].resultado_parcial_de_pi = pi_temp_buf;
       indice_serie_actual = indice_serie_actual_buf ;
       }
+    actualizarInterfaz();
+    // flag_alarma = 0;
     siglongjmp(jmpbuf, 2);
 
 }
@@ -198,11 +205,24 @@ void sig_alarm_handler(int sigo)
 void lottery_scheduler()
 {
     sigsetjmp(jmpbuf, 1); //Punto de regreso de threads
+    // if (sigsetjmp(jmpbuf, 1) == 2){
+    //     if( flag ){
+    //         pi_Calculado = pi_Calculado_buf;
+    //         threads[thread_ganador].unidades_de_trabajo_pendientes = unidades_pedientes_buf;
+    //         threads[thread_ganador].resultado_parcial_de_pi = pi_temp_buf;
+    //         indice_serie_actual = indice_serie_actual_buf ;
+    //         }
+    //         actualizarInterfaz();
+    // }
 
     if(todos_los_threads_terminaron()){
+        printf("todos_los_threads_terminaron");
+        pi_Calculado = pi_Calculado * 4;
+        actualizarInterfaz();
         free(threads);
     	printf("Todos los threads han terminado.\n");
     	printf("Resultado final de PI: %f\n",pi_Calculado);
+        return;
     }
 
     else
@@ -228,9 +248,10 @@ void lottery_scheduler()
 //Función que ejecutan los threads al ser seleccionados
 void trabajar(){
    //Modo Expropiativo
-   if(ES_EXPROPIATIVO){
 
+   if(ES_EXPROPIATIVO){
    	//Activa alarma de interrupción
+        // flag_alarma = 1;
         ualarm(QUANTUM*1000,0);
 
         //Calcula elementos de serie
@@ -238,13 +259,17 @@ void trabajar(){
         {
             calcular_unidad_trabajo();
         }
+        // flag_alarma = 0;
+        
+
+
 
    //Modo No Expropiativo
    }else{
    	int trabajo_hecho = 0;
    	int trabajo_pendiente = ceil(threads[thread_ganador].total_unidades_trabajo * PORCENTAJE_A_REALIZAR);
     printf("Trabajo pendiente %d\n",trabajo_pendiente );
-
+    
    	while( trabajo_hecho < trabajo_pendiente && threads[thread_ganador].unidades_de_trabajo_pendientes > 0)
    	{
             calcular_unidad_trabajo();
@@ -264,19 +289,18 @@ void trabajar(){
 //Calcular los 50 siguientes elementos de la serie
 void calcular_unidad_trabajo()
 {
+    
     //Variables útiles: macro UNIDAD_TRABAJO (vale 50)
     //			pi_Calculado, indice_serie_actual
     // Acceder a thread usando: threads[thread_ganador].propiedad
     //Fórmula = (-1)^n / (2n+1)
     //Obtener el �ndice indice_serie_actual
-    int index = 0;
     double pi_temp = 0;
     double term = 0;
 
-
+    // printf("\n calcular_unidad_trabajo 0 \n");
     for (int i = 0; i < UNIDAD_TRABAJO; i++) {
     //  index = i+indice_serie_actual;
-
       int potencia = pow(-1,(int)indice_serie_actual);
       int den = 2*indice_serie_actual +1 ;
       term = (double) potencia / den;
@@ -285,17 +309,19 @@ void calcular_unidad_trabajo()
       indice_serie_actual_buf = indice_serie_actual;
       pi_Calculado_buf = pi_Calculado;
       flag = 1;
-      pi_Calculado = pi_Calculado + pi_temp;
+      pi_Calculado = pi_Calculado + term;
       //Interfaz
       threads[thread_ganador].resultado_parcial_de_pi = pi_temp;
+      threads[thread_ganador].unidades_de_trabajo_pendientes -=1;
+      
       indice_serie_actual++;
 //      printf("Luego de sumar i %f\n",indice_serie_actual);
 //    printf("Antes de flag indice_serie_actual%d\n",indice_serie_actual );
       flag = 0;
-      //printf("Antes de flag indice_serie_actual%d\n",indice_serie_actual );
     }
-      threads[thread_ganador].unidades_de_trabajo_pendientes -=1;
-      printf("Unidad de trabajo terminada\n");
+    // printf("\n calcular_unidad_trabajo 1 \n");
+    
+      
 
     //Interfaz
 
@@ -320,11 +346,11 @@ float getPorcentajeTrabajo(int positionThread){
 }
 
 // Actualiza la interfaz
-void actualizarInterfaz(int threadActual){
-    printf("actualizarInterfaz");
+void actualizarInterfaz(){
+    // printf("actualizarInterfaz");
 
     // Actualizamos todos los hilos en pantalla
-    for (int i = 0; i < TOTAL_THREADS+1; i++) {
+    for (int i = 0; i < TOTAL_THREADS; i++) {
 
         char value_percentage[100];
         char value_result[100];
@@ -337,7 +363,7 @@ void actualizarInterfaz(int threadActual){
 
         // Si es el thread actual le aplica un estilo único
         // TODO
-        if (i==threadActual){
+        if (i==thread_ganador){
             gtk_spinner_start(visual_threads[i].spinner);
 
             if (gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar"))
@@ -461,7 +487,7 @@ void on_window_main_destroy()
 // Esta función es llamada desde Glade una vez que inicia la interfaz
 void algorithm(){
 
-    testeandoLaInterfaz();
+    // testeandoLaInterfaz();
 
     //Inicializa random
     time_t t;
@@ -471,19 +497,25 @@ void algorithm(){
     if(signal(SIGALRM, sig_alarm_handler) == SIG_ERR){
     	printf("Error de la señal");
     	exit(1);
+        
     }
 
     lottery_scheduler();
+    exit(0);
+    
 }
 
 int main(int argc, char **argv)
 {
     read_parameters();
-    //iniciarInterfaz(argc, argv);
-    signal(SIGALRM,sig_alarm_handler);
-    lottery_scheduler();
-     pi_Calculado = pi_Calculado * 4;
-     printf("Pi %f\n",pi_Calculado );
+    
+    // iniciarInterfaz(argc, argv);
+    algorithm();
+
+    // signal(SIGALRM,sig_alarm_handler);
+    // lottery_scheduler();
+    //  
+    //  printf("Pi %f\n",pi_Calculado );
     // Se está llamando desde interfaz la inicialización del programa, MIENTRAS se encuentra
     // la forma de hacerlo automáticamente luego de inicializar la interfaz.
     // algorithm();
