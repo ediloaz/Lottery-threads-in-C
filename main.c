@@ -8,14 +8,16 @@
 #include <math.h>
 #include <gtk/gtk.h>
 
-#define UNIDAD_TRABAJO 50
+#define UNIDAD_TRABAJO 1
 
 
 // Usen para compilar y correr:
 //
-// gcc -o gladewin main.c -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic ; ./gladewin
+// gcc -o gladewin main.c -lm -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic ; ./gladewin
 
 
+//Flags
+int flag = 0;
 
 //Parametros
 short int ES_EXPROPIATIVO;
@@ -23,11 +25,21 @@ int TOTAL_THREADS;
 int QUANTUM;
 float PORCENTAJE_A_REALIZAR;
 
+
 //Resultado
 double pi_Calculado = 0;
 
+
 //Último índice de la serie que fue calculado por un thread
 int indice_serie_actual = 0;
+
+//Índices para cálculo de pi
+int pi_Calculado_buf = 0;
+int indice_serie_actual_buf = 0;
+int unidades_pedientes_buf = 0;
+int pi_temp_buf = 0;
+
+int thread_ganador;
 
 struct Thread{
     int total_boletos;
@@ -63,13 +75,12 @@ struct VisualThread *visual_threads;
 sigjmp_buf jmpbuf;
 
 //Funciones
-void calcular_unidad_trabajo(int thread_ganador);
+void calcular_unidad_trabajo();
 void read_parameters();
 int obtenerThread(int boleto_ganador);
 int todos_los_threads_terminaron();
 void lottery_scheduler();
-void trabajar(int ganador);
-void calcular_unidad_trabajo(int thread_ganador);
+void trabajar();
 
 //Inicializa un thread
 void new_thread(struct Thread *thread){
@@ -102,6 +113,10 @@ void read_parameters()
     TOTAL_THREADS = atoi(line);
 
     threads = malloc(sizeof(*threads) * TOTAL_THREADS);
+    if(threads == NULL){
+      printf("MALLOC FALLÓ\n");
+      exit(1);
+    }
 
     //Total de boletos
     getline(&line, &len, file);
@@ -118,8 +133,8 @@ void read_parameters()
     element = strtok(line, " ");
     for(int i=0; i < TOTAL_THREADS; i++)
     {
-    	threads[i].total_unidades_trabajo =  atoi(element);
-    	threads[i].unidades_de_trabajo_pendientes = atoi(element);
+    	threads[i].total_unidades_trabajo =  atoi(element) * UNIDAD_TRABAJO;
+    	threads[i].unidades_de_trabajo_pendientes = atoi(element) * UNIDAD_TRABAJO;
     	element = strtok(NULL, " ");
     }
 
@@ -169,7 +184,14 @@ int todos_los_threads_terminaron()
 //Función llamada por la señal de alarma
 void sig_alarm_handler(int sigo)
 {
+  if( flag == 1){
+      pi_Calculado = pi_Calculado_buf;
+      threads[thread_ganador].unidades_de_trabajo_pendientes = unidades_pedientes_buf;
+      threads[thread_ganador].resultado_parcial_de_pi = pi_temp_buf;
+      indice_serie_actual = indice_serie_actual_buf ;
+      }
     siglongjmp(jmpbuf, 2);
+
 }
 
 //Scheduler por lotería, selecciona siguiente thread
@@ -191,61 +213,100 @@ void lottery_scheduler()
         }
 
         int boleto_ganador = rand() % total_boletos;
-        int thread_ganador = obtenerThread(boleto_ganador);
+        thread_ganador = obtenerThread(boleto_ganador);
 
         //PRINTS DE PRUEBA
         printf("\n----HACIENDO LOTERÍA--------------\n");
         printf("Total de boletos: %d\n", total_boletos);
         printf("Boleto ganador: %d\n", boleto_ganador);
         printf("Thread con boleto ganador: %d\n", thread_ganador);
-
+        trabajar();
     }
 
 }
 
 //Función que ejecutan los threads al ser seleccionados
-void trabajar(int ganador){
+void trabajar(){
    //Modo Expropiativo
    if(ES_EXPROPIATIVO){
 
    	//Activa alarma de interrupción
-        alarm(QUANTUM);
+        ualarm(QUANTUM*1000,0);
 
         //Calcula elementos de serie
-        while(threads[ganador].unidades_de_trabajo_pendientes > 0)
+        while(threads[thread_ganador].unidades_de_trabajo_pendientes > 0)
         {
-            calcular_unidad_trabajo(ganador);
+            calcular_unidad_trabajo();
         }
 
    //Modo No Expropiativo
    }else{
    	int trabajo_hecho = 0;
-   	int trabajo_pendiente = threads[ganador].total_unidades_trabajo * PORCENTAJE_A_REALIZAR;
+   	int trabajo_pendiente = ceil(threads[thread_ganador].total_unidades_trabajo * PORCENTAJE_A_REALIZAR);
+    printf("Trabajo pendiente %d\n",trabajo_pendiente );
 
-   	while( trabajo_hecho < trabajo_pendiente && threads[ganador].unidades_de_trabajo_pendientes > 0)
+   	while( trabajo_hecho < trabajo_pendiente && threads[thread_ganador].unidades_de_trabajo_pendientes > 0)
    	{
-            calcular_unidad_trabajo(ganador);
-            trabajo_hecho++;
+            calcular_unidad_trabajo();
+            trabajo_hecho += UNIDAD_TRABAJO;
         }
 
    }
 
    //Quita tiquetes si thread terminó trabajo
-   if(threads[ganador].unidades_de_trabajo_pendientes == 0)
-       threads[ganador].total_boletos = 0;
+   if(threads[thread_ganador].unidades_de_trabajo_pendientes == 0)
+       threads[thread_ganador].total_boletos = 0;
 
    //Regresa a scheduler
    siglongjmp(jmpbuf, 1);
 }
 
 //Calcular los 50 siguientes elementos de la serie
-void calcular_unidad_trabajo(int thread_ganador)
+void calcular_unidad_trabajo()
 {
     //Variables útiles: macro UNIDAD_TRABAJO (vale 50)
     //			pi_Calculado, indice_serie_actual
     // Acceder a thread usando: threads[thread_ganador].propiedad
+    //Fórmula = (-1)^n / (2n+1)
+    //Obtener el �ndice indice_serie_actual
+    int index = 0;
+    double pi_temp = 0;
+    double term = 0;
 
 
+    for (int i = 0; i < UNIDAD_TRABAJO; i++) {
+    //  index = i+indice_serie_actual;
+
+      int potencia = pow(-1,(int)indice_serie_actual);
+      int den = 2*indice_serie_actual +1 ;
+      term = (double) potencia / den;
+      pi_temp = pi_temp + term;
+      pi_temp_buf = pi_temp;
+      indice_serie_actual_buf = indice_serie_actual;
+      pi_Calculado_buf = pi_Calculado;
+      flag = 1;
+      pi_Calculado = pi_Calculado + pi_temp;
+      //Interfaz
+      threads[thread_ganador].resultado_parcial_de_pi = pi_temp;
+      indice_serie_actual++;
+//      printf("Luego de sumar i %f\n",indice_serie_actual);
+//    printf("Antes de flag indice_serie_actual%d\n",indice_serie_actual );
+      flag = 0;
+      //printf("Antes de flag indice_serie_actual%d\n",indice_serie_actual );
+    }
+      threads[thread_ganador].unidades_de_trabajo_pendientes -=1;
+      printf("Unidad de trabajo terminada\n");
+
+    //Interfaz
+
+
+    //Calcular los siguientes 50 t�rminos de la serie (porque 50 es el tama�o definido)
+    //Actutalizar el total de pi valor_pi_calculado
+    //Actualizar subtotal de pi en el thread
+    //Actualizar indice_serie_actual ++
+    //Actualizar cuantas unidades de trabajo lleva el thread (menos 1)
+    //Actualizar GUI?
+    //IMPORTANTE: Alarma no puede interrumpir las actualizaciones. Deber�an ser at�micas.
 }
 
 
@@ -418,8 +479,11 @@ void algorithm(){
 int main(int argc, char **argv)
 {
     read_parameters();
-    iniciarInterfaz(argc, argv);
-
+    //iniciarInterfaz(argc, argv);
+    signal(SIGALRM,sig_alarm_handler);
+    lottery_scheduler();
+     pi_Calculado = pi_Calculado * 4;
+     printf("Pi %f\n",pi_Calculado );
     // Se está llamando desde interfaz la inicialización del programa, MIENTRAS se encuentra
     // la forma de hacerlo automáticamente luego de inicializar la interfaz.
     // algorithm();
