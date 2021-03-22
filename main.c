@@ -105,8 +105,8 @@ void read_parameters()
     //Lee total de threads
     getline(&line, &len, file);
     TOTAL_THREADS = atoi(line);
-    if(TOTAL_THREADS<=0 || TOTAL_THREADS>maxThreadsEnInterfaz){
-    	printf("Cantidad de threads no soportados, se espera minimo 1 máximo %i", maxThreadsEnInterfaz);
+    if(TOTAL_THREADS<5 || TOTAL_THREADS>maxThreadsEnInterfaz){
+    	printf("Cantidad de threads no soportados, se espera minimo 5 máximo %i.", maxThreadsEnInterfaz);
     	exit(1);
     }
 
@@ -222,11 +222,10 @@ void lottery_scheduler()
 
 
     if(todos_los_threads_terminaron()){
-        pi_Calculado = pi_Calculado * 4;
         actualizarInterfaz();
         free(threads);
     	printf("----Todos los threads han terminado.------\n");
-    	printf("Resultado final de PI: %f\n",pi_Calculado);
+    	printf("Resultado final de PI: %f\n",pi_Calculado*4);
         return;
     }
 
@@ -367,7 +366,7 @@ void actualizarInterfaz(){
     }
 
     char piGeneralString[250];
-    sprintf(piGeneralString, "%s%.60f", "Pi general calculado: ", pi_Calculado);
+    sprintf(piGeneralString, "%s%.60f", "Pi general calculado: ", pi_Calculado*4);
     gtk_label_set_text(GTK_LABEL(g_lbl_pi_general), piGeneralString);
 
     // Revisa si algún evento está pendiente de actualizar y lo actualiza.

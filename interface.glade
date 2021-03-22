@@ -21,9 +21,9 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="margin_left">10</property>
-        <property name="margin_right">10</property>
-        <property name="margin_top">15</property>
-        <property name="margin_bottom">15</property>
+        <property name="margin_right">15</property>
+        <property name="margin_top">30</property>
+        <property name="margin_bottom">30</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkBox" id="header">
