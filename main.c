@@ -346,7 +346,7 @@ void actualizarInterfaz(){
         gtk_label_set_text(GTK_LABEL(visual_threads[i].result), value_result);
 
         // Si es el thread actual le aplica un estilo único
-            if (i==thread_ganador){
+        if (i==thread_ganador){
             gtk_spinner_start(visual_threads[i].spinner);
 
             if (gtk_style_context_has_class (gtk_widget_get_style_context(visual_threads[i].progress_bar), "progressBar"))
@@ -455,11 +455,15 @@ void iniciarInterfaz(int argc, char *argv[])
 // Se llama cuando la interfaz es cerrada
 void on_window_main_destroy()
 {
+    
     gtk_main_quit();
     exit(0);
 }
 
-
+void finalizarAnimacionesDeInterfaz(){
+    thread_ganador = -1;
+    actualizarInterfaz();
+}
 
 // Esta función es llamada desde Glade una vez que inicia la interfaz
 void algorithm(){
@@ -476,6 +480,8 @@ void algorithm(){
     }
 
     lottery_scheduler();
+
+    finalizarAnimacionesDeInterfaz();
 
 }
 
