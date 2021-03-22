@@ -339,7 +339,7 @@ void actualizarInterfaz(){
         char value_percentage[100];
         char value_result[100];
         sprintf(value_percentage, "%i%c", (int)getPorcentajeTrabajo(i), '%');
-        sprintf(value_result, "%.30f", threads[i].resultado_parcial_de_pi);
+        sprintf(value_result, "%.30f", threads[i].resultado_parcial_de_pi*4);
 
         gtk_label_set_text(GTK_LABEL(visual_threads[i].percentage), value_percentage);
         gtk_progress_bar_set_fraction(visual_threads[i].progress_bar, (getPorcentajeTrabajo(i)/100));
