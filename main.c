@@ -276,7 +276,7 @@ void trabajar(){
    }else{
    	int trabajo_hecho = 0;
    	int trabajo_pendiente = ceil(threads[thread_ganador].total_unidades_trabajo * PORCENTAJE_A_REALIZAR);
-    printf("Trabajo pendiente %d\n",trabajo_pendiente );
+
 
    	while( trabajo_hecho < trabajo_pendiente && threads[thread_ganador].unidades_de_trabajo_pendientes > 0)
    	{
