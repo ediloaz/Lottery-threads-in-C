@@ -223,7 +223,7 @@ void lottery_scheduler()
 
     if(todos_los_threads_terminaron()){
         actualizarInterfaz();
-        free(threads);
+        
     	printf("----Todos los threads han terminado.------\n");
     	printf("Resultado final de PI: %f\n",pi_Calculado*4);
         return;
@@ -481,6 +481,7 @@ void algorithm(){
     lottery_scheduler();
 
     finalizarAnimacionesDeInterfaz();
+    free(threads);
 
 }
 
