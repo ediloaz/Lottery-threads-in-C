@@ -16,7 +16,7 @@ Para compilar utilizar el siguiente comando:
 
  gcc -o gladewin main.c -lm -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
 
-#ejecutar
+# Ejecutar
 
 Para ejecutar el programa:
 
