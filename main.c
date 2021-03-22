@@ -225,8 +225,8 @@ void lottery_scheduler()
         pi_Calculado = pi_Calculado * 4;
         actualizarInterfaz();
         free(threads);
-    	//printf("----Todos los threads han terminado.------\n");
-    	//printf("Resultado final de PI: %f\n",pi_Calculado);
+    	printf("----Todos los threads han terminado.------\n");
+    	printf("Resultado final de PI: %f\n",pi_Calculado);
         return;
     }
 
@@ -244,10 +244,10 @@ void lottery_scheduler()
         thread_ganador = obtenerThread(boleto_ganador);
 
         //Prints de revisión en terminal
-        //printf("\n----HACIENDO LOTERÍA--------------\n");
-        //printf("Total de boletos: %d\n", total_boletos);
-        //printf("Boleto ganador: %d\n", boleto_ganador);
-        //printf("Thread con boleto ganador: %d\n", thread_ganador);
+        printf("\n----HACIENDO LOTERÍA--------------\n");
+        printf("Total de boletos: %d\n", total_boletos);
+        printf("Boleto ganador: %d\n", boleto_ganador);
+        printf("Thread con boleto ganador: %d\n", thread_ganador);
         trabajar();
     }
 
