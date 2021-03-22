@@ -4,10 +4,12 @@
     color: black;
     background-color: #f1c40f;
     padding: 6px 60px;
+    border-radius: 7px;
 }
 .headerContainer, .footerContainer{
     margin-left: 150px;
     margin-right: 150px;
+    border-radius: 7px;
 }
 .headerContainer{
     background-color: #f1c40f;
@@ -27,7 +29,14 @@
 }
 
 /* About threads */
+.percentage{
+    font-size: 16px;
+    margin-bottom: 4px;
+}
 
+.progressBar{
+    margin-right: 10px;
+}
 
 .progressBar > trough, .currentProgressBar > trough {
     margin-bottom: 5px;

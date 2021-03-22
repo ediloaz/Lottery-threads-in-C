@@ -107,7 +107,6 @@
                     <property name="tooltip_text" translatable="yes">Thread #01
 
 Barra de progreso de completitud del thread</property>
-                    <property name="fraction">2.2351741811588166e-10</property>
                     <style>
                       <class name="progressBar"/>
                     </style>
@@ -137,6 +136,9 @@ Porcentaje de completitud del thread</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -151,7 +153,7 @@ Porcentaje de completitud del thread</property>
 
 Resultado parcial</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -204,6 +206,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -215,7 +220,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -268,6 +273,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -279,7 +287,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -332,6 +340,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -343,7 +354,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -370,7 +381,6 @@ Resultado parcial</property>
                   <object class="GtkProgressBar" id="th_05_prg_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="fraction">2.2351741811588166e-10</property>
                     <style>
                       <class name="progressBar"/>
                     </style>
@@ -397,6 +407,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -408,7 +421,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -461,6 +474,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -472,7 +488,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -525,6 +541,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -536,7 +555,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -589,6 +608,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -600,7 +622,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -653,6 +675,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -664,7 +689,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -717,6 +742,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -728,7 +756,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -781,6 +809,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -792,7 +823,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -844,7 +875,10 @@ Resultado parcial</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
-                    <property name="label" translatable="yes">12%</property>
+                    <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -856,7 +890,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -909,6 +943,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -920,7 +957,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -973,6 +1010,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -984,7 +1024,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -1036,7 +1076,10 @@ Resultado parcial</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
-                    <property name="label" translatable="yes">15%</property>
+                    <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -1048,7 +1091,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -1101,6 +1144,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -1112,7 +1158,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -1165,6 +1211,9 @@ Resultado parcial</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">0%</property>
+                    <style>
+                      <class name="percentage"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -1176,7 +1225,7 @@ Resultado parcial</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -1237,7 +1286,7 @@ Resultado parcial</property>
                   <object class="GtkLabel" id="th_18_lbl_result">
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">0.00000</property>
+                    <property name="label" translatable="yes">0                                                                                  </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -1250,6 +1299,9 @@ Resultado parcial</property>
                 <child>
                   <placeholder/>
                 </child>
+                <style>
+                  <class name="percentage"/>
+                </style>
               </object>
               <packing>
                 <property name="left_attach">2</property>
