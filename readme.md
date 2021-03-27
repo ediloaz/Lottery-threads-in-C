@@ -1,7 +1,9 @@
 # Proyecto 1
 
+Del curso **Sistemas Operativos Avanzados**, de la Maestría de Ciencias de la Computación del Tecnológico de Costa Rica.
+
 Profesor:
-  Francisco Torres Rojas
+  Dr. Francisco Torres Rojas
 
 Integrantes:
   - Nicole Carvajal Barboza 2017098785
@@ -14,13 +16,13 @@ Integrantes:
 
 Para compilar utilizar el siguiente comando:
 
- gcc -o gladewin main.c -lm -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
+ ```gcc -o gladewin main.c -lm -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic```
 
 # Ejecutar
 
 Para ejecutar el programa:
 
- ./gladewin
+ ```./gladewin```
 
 # Parámetros
 
